@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load tmpl %}
+
+{% block content %}
+	<ol id="tasks">
+	</ol>
+{% endblock content %}
+
+{% block templates %}
+	{% tmpl task_tmpl %}
+		{{#data}}
+			<li pk="{{ id }}">{{ name }}</li>
+		{{/data}}
+	{% endtmpl %}
+{% endblock templates %}
+
+{% block scripts %}	
+	<script src="http://192.168.3.77:8888/faye.js"></script>
+	<!--  
+	-->
+
+	<script>
+	
+		$(function() {			
+			// LOAD TASKS 
+			$.callAPI('get', 'list_items', function(reply) {
+				$('#task_tmpl').mustache(reply).appendTo('#tasks');
+			});
+			
+			// SORT TASKS
+			$('#tasks').sortable({
+				placeholder: "placeholder",
+				update: function(event, ui) {
+					//console.log(event);
+					pk = ui.item.attr("pk");
+					post_data = {
+						"pk": pk, 
+						"index": $('#tasks li').index(ui.item),
+						"csrfmiddlewaretoken": '{{ csrf_token }}'
+					}
+					
+					//$.post('{% url main__update_item %}', post_data
+					$.API.updateItem(post_data, function(reply) {
+						//if (reply.level == 1) {
+							$.flash('success', 'Successfully sorted!');
+						//} else {
+						//	$.flash('error', reply.data)
+						//}
+					});
+				}
+			});
+
+			// FAYE
+			var client = new Faye.Client('http://192.168.3.77:8888/faye');
+			client.subscribe('/events', function(event) {
+				method = event.cmd[0];
+				args = event.cmd[1];
+				kwargs = event.cmd[2];
+				if (method == 'update_item') {
+					pk = kwargs.pk;
+					index = kwargs.index;
+					
+					$task = $('#tasks li[pk=' + pk + ']');
+					currentIndex = $('#tasks li').index($task);
+										
+					if (currentIndex != index) {
+						$toTask = $('#tasks li:eq(' + index + ')');
+						if (currentIndex > index) {
+							$task.insertBefore($toTask);
+						} else {
+							$task.insertAfter($toTask);
+						}
+						$.flash('success', 'Task position changed')
+					}
+
+					$task.effect('highlight', {}, 800);
+				}
+			});
+			/*
+			*/
+		});
+	</script>
+{% endblock scripts %}

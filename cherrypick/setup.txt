@@ -1,0 +1,3 @@
+sudo port install libevent
+export CFLAGS="-I/opt/local/include -L/opt/local/lib"
+pip install gevent

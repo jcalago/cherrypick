@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load tmpl %}
+
+{% block content %}
+	<section id="task-details">
+	</section>
+
+	<section id="task-board">		
+		<form>
+			<input type="text" id="logger" value="" />
+		</form>
+		
+		<ul id="tasks">
+			<li>
+				<span class="blue inbox">@loveyewear</span>
+				<span class="orange task">#Add share links on receipt page</span>
+				<span class="green user">Jonas Lundberg</span>
+				<span class="purple project">[receipt page]</span>
+				
+			</li>
+			<li>
+				<span class="blue inbox">@sportamore</span>
+				<span class="orange">#Fix pie charts on SPORT</span>
+				<span class="green" style="float:right;">Hannes Ljungberg</span>
+			</li>
+			<li>
+				<span class="blue inbox">@dn</span>
+				<span class="orange">#Align error box for email field</span>
+				<span class="green" style="float:right;">Stefan Andersson</span>
+			</li>
+		</ul>
+		
+		<ul id="tasks" style="clear:left;">
+			<li class="green">Fix firstpage bug</li>
+			<li class="pink">Implement klarna</li>
+			<li class="blue">Add share-links on receipt page</li>
+			<li class="orange">Fix IE padding problem</li>
+			<li class="grey">This is a resolved task</li>
+			<li class="yellow">I'm a comment</li>
+			<li class="purple">This is a purple string</li>
+		</ul>
+	</section>	
+{% endblock content %}
+
+{% block templates %}
+	{% tmpl taskdetails_tmpl %}
+		<div id="task">
+			<table>
+				<tbody>
+					<tr><th class="grey">Inbox</th><td class="blue">{{ inbox }}</td></tr>
+					<tr><th class="grey">Folder</th><td class="pink">{{ folder }}</td></tr>
+					<tr><th class="grey">Project</th><td class="purple">{{ project }}</td></tr>
+					<tr><th class="grey">Task</th><td class="orange">{{ subject }}</td></tr>
+					<tr><th class="grey">User</th><td class="green">{{ user }}</td></tr>					
+				</tbody>
+			</table>
+			<p class="yellow">
+				{{ description }}
+			</p>
+		</div>		
+	{% endtmpl %}
+{% endblock templates %}
+
+{% block scripts %}
+	<script>
+		$(function() {
+			$('#tasks li').click(function() {
+				$.API.readTask(1, function(reply) {
+					var $task = $('#taskdetails_tmpl').mustache(reply.data);
+					$('#task-details').html($task);
+				});
+			});
+		});	
+	</script>	
+{% endblock scripts %}

@@ -1,0 +1,70 @@
+{% load tmpl %}<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title></title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.tagEditor.css">
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css">
+
+	<script src="{{ STATIC_URL }}js/libs/modernizr-2.0.6.min.js"></script>
+</head>
+<body>
+
+	<header>
+		<nav id="menu">
+			<ul>
+				<li><a href="{% url main__today %}">TODAY</a></li>
+				<li class="active">					
+					<a href="{% url main__inbox '' %}">INBOX</a>
+					{% if inbox %}: <span class="blue">@{{ inbox }}</span>{% endif %}
+					<ul id="inboxes">
+					{% for inbox in inboxes %}
+						<li>@<a href="{% url main__inbox inbox %}">{{ inbox }}</a></li>
+					{% endfor %}
+					</ul>
+				</li>
+				<li>TODO</li>
+				<li>SOMEDAY</li>
+				<li>FILED</li>
+			</ul>
+		</nav>
+	</header>
+	<div id="main" role="main">
+		{% block content %}{% endblock content %}
+	</div>
+	<footer>
+
+	</footer>
+
+{% tmpl message_tmpl %}
+	<div id="message" class="{{ level }}">{{ message }}</div>
+{% endtmpl %}	
+{% block templates %}{% endblock templates %} 
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+<!-- scripts concatenated and minified via ant build script-->
+<script src="{{ STATIC_URL }}js/plugins.js"></script>
+<script src="{{ STATIC_URL }}js/libs/jquery.tagEditor.js"></script>
+<script src="{{ STATIC_URL }}js/libs/jquery.mustache.js"></script>
+<!--  
+<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+-->
+<script src="{{ STATIC_URL }}js/script.js"></script>
+{% block scripts %}{% endblock scripts %}
+<!-- end scripts-->
+
+</body>
+</html>
