@@ -15,13 +15,9 @@
 {% endblock templates %}
 
 {% block scripts %}	
-	<script src="http://192.168.3.77:8888/faye.js"></script>
-	<!--  
-	-->
-
-	<script>
-	
+	<script>	
 		$(function() {			
+
 			// LOAD TASKS 
 			$.callAPI('get', 'list_items', function(reply) {
 				$('#task_tmpl').mustache(reply).appendTo('#tasks');
@@ -49,35 +45,43 @@
 					});
 				}
 			});
-
-			// FAYE
-			var client = new Faye.Client('http://192.168.3.77:8888/faye');
-			client.subscribe('/events', function(event) {
-				method = event.cmd[0];
-				args = event.cmd[1];
-				kwargs = event.cmd[2];
-				if (method == 'update_item') {
-					pk = kwargs.pk;
-					index = kwargs.index;
-					
-					$task = $('#tasks li[pk=' + pk + ']');
-					currentIndex = $('#tasks li').index($task);
-										
-					if (currentIndex != index) {
-						$toTask = $('#tasks li:eq(' + index + ')');
-						if (currentIndex > index) {
-							$task.insertBefore($toTask);
-						} else {
-							$task.insertAfter($toTask);
-						}
-						$.flash('success', 'Task position changed')
-					}
-
-					$task.effect('highlight', {}, 800);
-				}
-			});
-			/*
-			*/
 		});
 	</script>
+	
+	<!--  
+	<script src="http://127.0.0.1:8888/faye.js"></script>	
+	<script>	
+		$(function() {
+			try {
+				var client = new Faye.Client('http://127.0.0.1:8888/faye');
+				client.subscribe('/events', function(event) {
+					method = event.cmd[0];
+					args = event.cmd[1];
+					kwargs = event.cmd[2];
+					if (method == 'update_item') {
+						pk = kwargs.pk;
+						index = kwargs.index;
+						
+						$task = $('#tasks li[pk=' + pk + ']');
+						currentIndex = $('#tasks li').index($task);
+											
+						if (currentIndex != index) {
+							$toTask = $('#tasks li:eq(' + index + ')');
+							if (currentIndex > index) {
+								$task.insertBefore($toTask);
+							} else {
+								$task.insertAfter($toTask);
+							}
+							$.flash('success', 'Task position changed')
+						}
+	
+						$task.effect('highlight', {}, 800);
+					}
+				});
+			} catch (exception) {
+				console.log(exception);
+			}
+		});
+	</script>
+	-->
 {% endblock scripts %}
